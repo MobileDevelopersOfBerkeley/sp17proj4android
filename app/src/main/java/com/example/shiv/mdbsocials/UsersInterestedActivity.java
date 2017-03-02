@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -24,16 +25,19 @@ public class UsersInterestedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users_interested);
+
+        //setup recyclerview
         rview = (RecyclerView) findViewById(R.id.rview2);
         rview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        Intent intent = getIntent();
-
         userAdapter = new UserAdapter(getApplicationContext(), new ArrayList<User>());
         rview.setAdapter(userAdapter);
+
+        Intent intent = getIntent();
         final String firebasekey = intent.getStringExtra("key");
 
         final ArrayList<String> interestedPeople = new ArrayList<>();
 
+        //read the users interested and put it into a array
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("/events");
         ref.addChildEventListener(new ChildEventListener() {
             @Override
@@ -73,22 +77,5 @@ public class UsersInterestedActivity extends AppCompatActivity {
 
             }
         });
-
-        //Why does this not work? //ArrayList<String> interestedPeople = ref.child(firebasekey).child("peopleinterested").valueOf(ArrayList.class);
-        //ArrayList<String> interestedPeople = ref.child(firebasekey).child("peopleinterested").getValue(String.class);
-        /*
-        User x = new User("hello","dsf");
-
-        User y = new User("durr","dsfsdf");
-        ArrayList<User> d = new ArrayList<>();
-        for (int i = 0; i < interestedPeople.size(); i++) {
-            d.add(new User(interestedPeople.get(i),"temp"));
-        }
-        */
-        //d.add(x);
-        //d.add(y);
-
-
-
     }
 }

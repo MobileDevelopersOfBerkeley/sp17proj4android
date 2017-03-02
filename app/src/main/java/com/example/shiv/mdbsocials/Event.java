@@ -14,15 +14,12 @@ public class Event {
     String description;
     String email;
     String eventName;
-    String emailAddress;
     String imageURL;
     String key;
-    int ImageID;
     String numInterested;
     ArrayList<String> peopleInterested;
 
     public Event() {
-        //numInterested = "0";
         peopleInterested = new ArrayList<>();
 
     }

@@ -28,7 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class FeedActivity extends AppCompatActivity {
+public class FeedActivity extends AppCompatActivity implements View.OnClickListener {
 
     RecyclerView rview;
     EventAdapter eventAdapter;
@@ -38,51 +38,26 @@ public class FeedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
+
+
+        //initialize on click listeners for buttons
         Button logout = (Button) findViewById(R.id.button5);
+        logout.setOnClickListener(this);
         Button newsocial = (Button) findViewById(R.id.button6);
+        newsocial.setOnClickListener(this);
 
-
+        //set up recycler view
         rview = (RecyclerView) findViewById(R.id.recyclableView);
         rview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        /*
-        ArrayList<Event> events = new ArrayList<>();
-        Event party = new Event();
-        party.eventName = "partay";
-        party.email = "ksidhu@gmail.com";
-        party.numInterested = 7;
-        Event party2 = new Event();
-        party2.eventName = "partayyyyy";
-        party2.email = "ksidhu@gmailllll.com";
-        party2.numInterested = 17;
-        events.add(party);
-        events.add(party2);
-        */
-
         eventAdapter = new EventAdapter(getApplicationContext(), getList());//events);
-        //eventAdapter.clearList();
-        //eventAdapter.events = getList();
         rview.setAdapter(eventAdapter);
-
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        newsocial.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(),NewSocialActivity.class);
-                startActivity(intent);
-            }
-        });
-
-
     }
 
+
+    /**
+     * Creates a list of events based on server data and returns it
+     * @return arraylist
+     */
     private ArrayList<Event> getList() {
         final ArrayList<Event> currEvents = new ArrayList<>();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("/events");
@@ -93,13 +68,12 @@ public class FeedActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                //eventAdapter.clearList();
                 currEvents.clear();
 
                 for (DataSnapshot x : dataSnapshot.getChildren()) {
 
                     Log.d(x.getKey(), x.getValue().toString());
-                    //would normally getKey here
+
                     Event e = new Event();
                     e.date = x.child("date").getValue(String.class);
                     e.description = x.child("description").getValue(String.class);
@@ -109,12 +83,9 @@ public class FeedActivity extends AppCompatActivity {
 
                     e.numInterested = x.child("interested").getValue(String.class);
                     e.key = x.getKey();
-                    //e.peopleInterested = dataSnapshot.child("peopleinterested").getValue(ArrayList.class); //breaking here
 
                     currEvents.add(e);
-                    //EventAdapter.events.add(e);
                     eventAdapter.notifyDataSetChanged();
-                    //rview.setAdapter(eventAdapter);
                 }
 
             }
@@ -125,55 +96,24 @@ public class FeedActivity extends AppCompatActivity {
             }
         });
         return currEvents;
-        /*
-        ref.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.d(dataSnapshot.getKey(), dataSnapshot.getValue().toString());
-                //would normally getKey here
-                Event e = new Event();
-                e.date = dataSnapshot.child("date").getValue(String.class);
-                e.description = dataSnapshot.child("description").getValue(String.class);
-                e.eventName = dataSnapshot.child("name").getValue(String.class);
-                e.imageURL = dataSnapshot.child("url").getValue(String.class);
-                e.email = dataSnapshot.child("email").getValue(String.class);;
-                e.numInterested = dataSnapshot.child("interested").getValue(String.class);
-                e.key = dataSnapshot.getKey();
-                //e.peopleInterested = dataSnapshot.child("peopleinterested").getValue(ArrayList.class); //breaking here
 
-                currEvents.add(e);
-                //EventAdapter.events.add(e);
-                rview.setAdapter(eventAdapter);
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        return currEvents;
-        */
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    public void onClick(View view) {
+        if (view.getId() == R.id.button5) {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+            startActivity(intent);
+
+        } else if (view.getId() == R.id.button6) {
+            Intent intent = new Intent(getApplicationContext(),NewSocialActivity.class);
+            startActivity(intent);
+        }
     }
 }
 

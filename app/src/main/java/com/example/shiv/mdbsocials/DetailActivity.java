@@ -3,6 +3,7 @@ package com.example.shiv.mdbsocials;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,9 +30,13 @@ import com.google.firebase.database.Transaction;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity implements View.OnClickListener {
 
     public Context context;
     String firebaseKey;
@@ -39,19 +45,23 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        context = getApplicationContext();
 
+        //initialize
+        context = getApplicationContext();
         TextView eventName = (TextView) findViewById(R.id.textView7);
         final ImageView img = (ImageView) findViewById(R.id.imageView2);
         TextView date = (TextView) findViewById(R.id.textView8);
         TextView description = (TextView) findViewById(R.id.textView9);
         TextView email = (TextView) findViewById(R.id.textView10);
+
+        //set onClick listeners
         Button interested = (Button) findViewById(R.id.button10);
+        interested.setOnClickListener(this);
         Button numPeopleGoing = (Button) findViewById(R.id.button9);
-        //numPeopleGoing.setText();
+        numPeopleGoing.setOnClickListener(this);
 
+        //Fill out variables with the values from the intent
         Intent intent = getIntent();
-
         String emailExtra = intent.getStringExtra("email");
         email.setText(emailExtra);
         String eventNameExtra = intent.getStringExtra("name");
@@ -61,10 +71,8 @@ public class DetailActivity extends AppCompatActivity {
         String descriptionExtra = intent.getStringExtra("description");
         description.setText(descriptionExtra);
         firebaseKey = intent.getStringExtra("key");
-        final int numPeople = intent.getStringArrayListExtra("peopleInterested").size();
 
-        final ArrayList<String> interestedPeople = new ArrayList<>();
-
+        //retrieve all the people interested and display this number
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("/events");
         ref.addChildEventListener(new ChildEventListener() {
             @Override
@@ -96,43 +104,35 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
+        //Display progress bar as the image loads
+        ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar3);
+        pb.setVisibility(ProgressBar.VISIBLE);
 
-
-
-        interested.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addInterested();
-                Toast.makeText(getApplicationContext(), "Marked as Interested", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        numPeopleGoing.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), UsersInterestedActivity.class);
-                intent.putExtra("key",firebaseKey);
-                startActivity(intent);
-            }
-        });
-
-
-
+        //Load the image in the background
         class DownloadFilesTask extends AsyncTask<String, Void, Bitmap> {
+
             protected Bitmap doInBackground(String... strings) {
-                try {return Glide.
-                        with(context).
-                        load(strings[0]).
-                        asBitmap().
-                        into(100, 100). // Width and height
-                        get();}
-                catch (Exception e) {return null;}
+                    try {
+                    URL url = new URL(strings[0]);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setDoInput(true);
+                    connection.connect();
+                    InputStream input = connection.getInputStream();
+                    Bitmap myBitmap = BitmapFactory.decodeStream(input);
+                    return myBitmap;
+                } catch (IOException e) {
+                    return null;
+                }
+
             }
 
             protected void onProgressUpdate(Void... progress) {}
 
             protected void onPostExecute(Bitmap result) {
                 img.setImageBitmap(result);
+                //after loading the image, make the progress bar invisible
+                ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar3);
+                pb.setVisibility(ProgressBar.INVISIBLE);
             }
         }
         String imageURLExtra = intent.getStringExtra("imageURL");
@@ -147,36 +147,31 @@ public class DetailActivity extends AppCompatActivity {
                 Log.d("sad", exception.toString());
             }
         });
-
-        
-
-
-
-
     }
 
-
+    /**
+     * Method increments the number of people interested in the event
+     */
     private void addInterested() {
 
-        //NOTE, also add self email to people interested arraylist
-
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("/events");
+
+
 
         ref.child(firebaseKey).runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
                 String numStringInterested = mutableData.child("interested").getValue().toString();
                 int numInterested = Integer.parseInt(numStringInterested);
-                numInterested++;
-
-                DetailActivity.addInterestedToDatabase(numInterested,firebaseKey);
-
                 ArrayList<String> a = (ArrayList) mutableData.child("peopleinterested").getValue();
                 if (!a.contains(MainActivity.email)) {
                     a.add(MainActivity.email);
                     ref.child(firebaseKey).child("peopleinterested").setValue(a);
+                    numInterested++;
 
                 }
+
+                DetailActivity.addInterestedToDatabase(numInterested,firebaseKey);
 
                 return Transaction.success(mutableData);
             }
@@ -186,90 +181,24 @@ public class DetailActivity extends AppCompatActivity {
 
             }
         });
-
-
-
-        //maybe try to add data change listener to get numInterested
-
-        //String numStringInterested = ref.child(firebaseKey).child("interested").toString();
-        //final String numStringInterested;
-
-        /* Legit stuff
-
-        ref.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.getKey().equals(firebaseKey)) {
-                    String numStringInterested = dataSnapshot.child("interested").getValue().toString();
-                    int numInterested = Integer.parseInt(numStringInterested);
-                    numInterested++;
-                    DetailActivity.addInterestedToDatabase(numInterested,firebaseKey);
-
-
-                    ArrayList<String> a = (ArrayList) dataSnapshot.child("peopleinterested").getValue();
-                    if (!a.contains(MainActivity.email)) {
-                        a.add(MainActivity.email);
-                        ref.child(firebaseKey).child("peopleinterested").setValue(a);
-
-                    }
-
-                    //ref.child(firebaseKey).child("interested").setValue(Integer.toString(numInterested));
-
-
-                }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        */
-
-
-
-
-
-       // Log.d("NOTICE", numStringInterested);
-        //int numInterested = Integer.parseInt(numStringInterested);
-        //numInterested++;
-
-
-        //numStringInterested = "7";//Integer.toString(numInterested);
-        //ref.child(firebaseKey).child("interested").setValue(numStringInterested);
-
-
-
-
-
-
-
-
-
-
     }
+
+    /**
+     * Updates the actual database with the new number of interested people
+     * @param interested
+     * @param firekey
+     */
 
     public static void addInterestedToDatabase(int interested, String firekey) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("/events");
         ref.child(firekey).child("interested").setValue(Integer.toString(interested));
 
     }
+
+    /**
+     * updates the buttontext of the number of people going
+     */
+
     public void displayNumPeopleButton(int num) {
         Button numPeopleGoing = (Button) findViewById(R.id.button9);
         if (num > 0) {
@@ -280,5 +209,21 @@ public class DetailActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    public void onClick(View view){
+        if (view.getId() == R.id.button10) {
+            ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar3);
+            pb.setVisibility(ProgressBar.VISIBLE);
+            addInterested();
+            pb.setVisibility(ProgressBar.INVISIBLE);
+            Toast.makeText(getApplicationContext(), "Marked as Interested", Toast.LENGTH_SHORT).show();
+        }
+        else if (view.getId() == R.id.button9) {
+            Intent intent = new Intent(getApplicationContext(), UsersInterestedActivity.class);
+            intent.putExtra("key",firebaseKey);
+            startActivity(intent);
+
+        }
     }
 }

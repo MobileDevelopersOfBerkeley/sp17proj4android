@@ -3,6 +3,7 @@ package com.example.shiv.mdbsocials;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -23,6 +24,10 @@ import com.google.firebase.storage.FirebaseStorage;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -30,6 +35,7 @@ import java.util.ArrayList;
  */
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.CustomViewHolder>  {
+
         Context context;
         public static ArrayList<Event> events;
 
@@ -50,10 +56,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.CustomViewHo
         public void onBindViewHolder(final EventAdapter.CustomViewHolder holder, int position) {
             Event currentEvent = events.get(events.size() - position - 1);
 
-            //In the onBindViewHolder, you want to set each of the parameters of ComputerCompanies very similiar
-            //to what you did to the layout manager.
 
-            //holder.pic.setImageResource(currentEvent.ImageID);
             holder.eventName.setText(currentEvent.eventName);
             holder.email.setText(currentEvent.email);
             holder.numInterested.setText(currentEvent.numInterested);
@@ -64,7 +67,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.CustomViewHo
             holder.pplInterested = currentEvent.peopleInterested;
 
 
-
+            //Use glide in background
             class DownloadFilesTask extends AsyncTask<String, Void, Bitmap> {
                 protected Bitmap doInBackground(String... strings) {
                     try {return Glide.
@@ -74,7 +77,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.CustomViewHo
                             into(100, 100). // Width and height
                             get();}
                     catch (Exception e) {return null;}
+
+
+
                 }
+
 
                 protected void onProgressUpdate(Void... progress) {}
 
@@ -94,9 +101,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.CustomViewHo
                 }
             });
 
-
-
-
         }
 
         @Override
@@ -104,11 +108,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.CustomViewHo
             return events.size();
         }
 
-        public void clearList() {  events = new ArrayList<Event>();}
-
         public class CustomViewHolder extends RecyclerView.ViewHolder {
 
-            //Set up the variables of Computer Companies here
 
             TextView eventName;
             TextView email;
@@ -123,7 +124,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.CustomViewHo
             public CustomViewHolder(View view) {
                 super(view);
 
-                //Here, think about what you have to "find..."
                 eventName = (TextView) view.findViewById(R.id.textView13);
                 email = (TextView) view.findViewById(R.id.textView12);
                 numInterested = (TextView) view.findViewById(R.id.textView14);
@@ -135,7 +135,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.CustomViewHo
                     public void onClick(View view) {
                         Intent intent = new Intent(context, DetailActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        //put extras such as this specific card values maybe
                         intent.putExtra("email",email.getText().toString());
                         intent.putExtra("name",eventName.getText().toString());
                         intent.putExtra("number",numInterested.getText().toString());

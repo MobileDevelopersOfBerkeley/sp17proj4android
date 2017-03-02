@@ -45,15 +45,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.CustomViewHold
     public void onBindViewHolder(final UserAdapter.CustomViewHolder holder, int position) {
         User currentUser = users.get(position);
 
-        //In the onBindViewHolder, you want to set each of the parameters of ComputerCompanies very similiar
-        //to what you did to the layout manager.
-
         holder.emailText.setText(currentUser.email);
         holder.imgView = currentUser.img;
-
-
-
-
     }
 
     @Override
@@ -68,21 +61,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.CustomViewHold
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
 
-        //Set up the variables of Computer Companies here
 
         TextView emailText;
         String imgView;
 
         public CustomViewHolder(View view) {
             super(view);
-
-            //Here, think about what you have to "find..."
             emailText = (TextView) view.findViewById(R.id.textView5);
-            //imgView = (ImageView) view.findViewById(R.id.imageView3);
         }
     }
-
-
-
 
 }
