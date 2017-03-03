@@ -6,19 +6,20 @@ import java.util.ArrayList;
 
 /**
  * Created by sarahtang on 2/23/17.
+ * A model class that contains all properties of a social
  */
 
 public class Social {
     String name;
     String date;
     String description;
-    String host; //should be their email(?)
+    String host; //email
     int numberInterested;
     String firebaseimageURL;
     ArrayList<String> peopleInterested;
 
     public Social() {
-        Log.e("whoops", "rip");
+        Log.e("SocialClass", "noInfo");
     }
 
     public Social (String name, String date, String description, String creator, int numberInterested, ArrayList<String> peopleInterested, String firebaseimageURL) {
@@ -30,6 +31,5 @@ public class Social {
         this.peopleInterested = peopleInterested;
         this.firebaseimageURL = firebaseimageURL;
 
-        //
         }
 }
