@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">MDBSocials</string>
+    <string name="signUpButtonPrompt">Sign Up</string>
+    <string name="signInButtonPrompt">Log In</string>
+    <string name="SignUpPagePrompt">Sign up for Socials!</string>
+    <string name="SignInPagePrompt">Sign in to Socials!</string>
+    <string name="EmailHint">Email</string>
+    <string name="NameHint">Name</string>
+    <string name="PasswordHint">Password</string>
+
+
+
+</resources>
