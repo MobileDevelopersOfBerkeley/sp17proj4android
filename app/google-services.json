@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "390076906806",
+    "firebase_url": "https://mdb-socials-47b33.firebaseio.com",
+    "project_id": "mdb-socials-47b33",
+    "storage_bucket": "mdb-socials-47b33.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:390076906806:android:882cd173d8533738",
+        "android_client_info": {
+          "package_name": "com.example.eric.socials"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "390076906806-d9i57ejp3qskfluavt8np4v0muof7tjj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4v6Q7uG0KXhOoA1h9Qj1DYojFRLxT_10"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
