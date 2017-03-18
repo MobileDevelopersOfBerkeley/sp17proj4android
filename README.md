@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 # sp17proj4android
 
 Repository for Spring 2017 MDB Android Training Program Mini-Project 4 Submissions
+=======
+# sp17proj3android
+
+Repository for Spring 2017 MDB Android Training Program Mini-Project 3 Submissions
+>>>>>>> 3a401a6afcca5bcd9e9a97689a5783443ea32dbd
 
 Finalized mini-projects should be stored in personal portfolios, but this repository will be used for providing feedback on code quality using the GitHub code review features.
 
