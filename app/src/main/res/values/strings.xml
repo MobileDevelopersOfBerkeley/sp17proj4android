@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MDBSocials</string>
+    <string name="title_activity_socials_feed">SocialsFeedActivity</string>
+    <string name="title_activity_social_feed">SocialFeedActivity</string>
+    <string name="title_activity_social_details">SocialDetailsActivity</string>
+    <string name="title_activity_new_social">NewSocialActivity</string>
+</resources>

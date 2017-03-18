@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_social_feed"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="8dp"
+    tools:context="com.example.radhika.mdbsocials.SocialFeedActivity"
+    android:background="@color/bg2">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5dp"
+            android:paddingTop="0dp"
+            android:clipToPadding="false"
+            android:clipChildren="true">
+
+            <Button
+                android:text="SIGN OUT"
+                android:id="@+id/signOutButton"
+                android:backgroundTint="@color/bg3"
+                android:textColor="@color/bg4"
+                android:textAlignment="center"
+                android:textSize="10sp"
+                android:layout_width="60dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:text="Socials"
+                android:layout_height="45dp"
+                android:id="@+id/socialsText"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:fontFamily="sans-serif-smallcaps"
+                android:textStyle="normal|bold"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimary"
+                android:layout_width="240dp"
+                android:textSize="30sp"
+                android:gravity="center_vertical|center_horizontal|center" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:clickable="true"
+                app:fabSize="normal"
+                app:srcCompat="@android:drawable/ic_input_add"
+                android:id="@+id/addSocialButton"
+                android:layout_width="40dp"
+                android:tint="@color/bg4"
+                app:backgroundTint="@color/bg3"
+                android:layout_height="40dp"
+                android:foregroundGravity="center_vertical|center_horizontal|center" />
+
+
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/recView" />
+    </LinearLayout>
+
+</RelativeLayout>
