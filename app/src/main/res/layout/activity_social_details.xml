@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/detailView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg2"
+    android:paddingBottom="16dp"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="16dp"
+    tools:context="com.example.radhika.mdbsocials.SocialDetailsActivity"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/socialTitleView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:text="Event Name"
+        android:textAlignment="center"
+        android:textSize="40sp"
+        tools:layout_editor_absoluteY="75dp"
+        android:textColor="@color/bg3"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textStyle="normal|bold" />
+
+    <TextView
+        android:id="@+id/dateTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Date"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:layout_marginBottom="10dp" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="94dp"
+        app:srcCompat="@mipmap/ic_launcher"
+        android:id="@+id/eventImageView"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/descriptionTextView"
+        android:layout_width="match_parent"
+        android:layout_marginTop="16dp"
+        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        android:background="@drawable/edit_text_border2"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:padding="15dp"
+        android:layout_height="wrap_content"
+        android:scrollHorizontally="false"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbarAlwaysDrawHorizontalTrack="false"
+        android:scrollbarStyle="outsideInset" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ToggleButton
+            android:id="@+id/interestedToggleButton"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="ToggleButton"
+            android:textOff="Interested"
+            android:textOn="Interested ✓"
+            android:layout_width="120dp"
+            android:gravity="center_vertical|center_horizontal|center"
+            android:layout_weight="1"
+            android:backgroundTint="@color/bg3"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/interestedButton"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="# Interested"
+            android:layout_width="120dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/bg3"
+            android:textStyle="bold"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+</LinearLayout>
