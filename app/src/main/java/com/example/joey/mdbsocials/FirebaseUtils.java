@@ -49,11 +49,11 @@ public class FirebaseUtils {
 
 
     /**
-     *
-     * @param context
-     * @param email
-     * @param pass1
-     * @param pass2
+     * Creates a new user in firebase
+     * @param context the context of the signup activity - used to display toasts
+     * @param email the email the user wishes to create account with as string
+     * @param pass1 password string
+     * @param pass2 check to see if two passwords match
      */
     public static void attemptSignup(final Context context, String email, String pass1, String pass2) {
         if (email.equals("")) {
@@ -80,10 +80,10 @@ public class FirebaseUtils {
     }
 
     /**
-     *
-     * @param context
-     * @param email
-     * @param password
+     *Attempts a login based on user input in fields
+     * @param context the context of Login Activity
+     * @param email a string that is the email the user submits
+     * @param password a string that is the password the user submits.
      */
     public static void attemptLogin(final Context context, String email, String password) {
 
@@ -110,12 +110,12 @@ public class FirebaseUtils {
     }
 
     /**
-     *
-     * @param context
-     * @param name
-     * @param description
-     * @param date
-     * @param file
+     * Attempts to create a new social based on entered fields.
+     * @param context context of CreateSocial Activity to push toasts / start activiites
+     * @param name name of new social
+     * @param description description of social
+     * @param date date of social
+     * @param file image file associated with social
      */
     public static void pushNewSocial(final CreateSocial context, final String name, final String description, final String date, final Uri file){
         //check to see if image exists
@@ -156,7 +156,11 @@ public class FirebaseUtils {
         });
     }
 
-
+    /**
+     * Creates the firebase listener for social objects and adds them to the feed Recycler view.
+     * @param context context of the feed activity
+     * @param adapter the adapter of the recycler view
+     */
     public static void initFeed(final FeedActivity context, final SocialAdapter adapter){
         final ArrayList<Social> socials = adapter.getSocials();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("/socials");
@@ -183,7 +187,9 @@ public class FirebaseUtils {
 
     }
 
-
+    /**
+     * Class used for asycronous image downloading.
+     */
     private static class DownloadImagesTask extends AsyncTask<Uri, Void, Bitmap> {
 
         private ImageView imageView;
@@ -234,6 +240,12 @@ public class FirebaseUtils {
         }
     }
 
+    /**
+     * Instantiates a new Download image task to pull an image from firebase for a given social
+     * @param id the id of the social
+     * @param imageView view where image is placed
+     * @param progressBar progress bar that image replaces.
+     */
     public static void loadImageFromFirebase(final String id, final ImageView imageView, final ProgressBar progressBar){
         StorageReference storageReference = FirebaseStorage.getInstance().getReference().child(id+".png");
         storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -245,6 +257,10 @@ public class FirebaseUtils {
 
     }
 
+    /**
+     * Uses firebase transaction to update interested field
+     * @param id id of the social.
+     */
     public static void addInterestedTransaction(String id){
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("/socials/" + id);
         String key = ref.child("people").push().getKey();
