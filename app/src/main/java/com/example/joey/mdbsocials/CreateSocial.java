@@ -1,6 +1,7 @@
 package com.example.joey.mdbsocials;
 
 import android.content.Intent;
+import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -22,91 +23,45 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-public class CreateSocial extends AppCompatActivity {
+public class CreateSocial extends AppCompatActivity implements View.OnClickListener{
 
     private Uri file;
-    private Button createSocial;
-    private Button addImage;
     private EditText socialName;
     private EditText socialDate;
     private EditText socialDescription;
     private ImageView previewImage;
-
-    private final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("/socials");
-    private StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_social);
 
-        createSocial = (Button) findViewById(R.id.createSocial);
-        addImage = (Button) findViewById(R.id.addImage);
         socialName = (EditText) findViewById(R.id.socialName);
         socialDate = (EditText) findViewById(R.id.profileDate);
         socialDescription = (EditText) findViewById(R.id.socalDescription);
         previewImage = (ImageView) findViewById(R.id.imagePreview);
 
-        addImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        findViewById(R.id.addImage).setOnClickListener(this);
+        findViewById(R.id.createSocial).setOnClickListener(this);
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.createSocial:
+                String name = socialName.getText().toString();
+                String date = socialDate.getText().toString();
+                String description = socialDescription.getText().toString();
+                FirebaseUtils.pushNewSocial(this, name, description, date, file);
+
+                break;
+            case R.id.addImage:
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("image/*");
                 startActivityForResult(intent, 1);
-            }
-        });
-
-        createSocial.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //check to see if image exists
-                if(file == null){
-                    Toast.makeText(CreateSocial.this, "no image selected!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                //First generate a key for the image
-                final String key = ref.push().getKey();
-                StorageReference imageRef = storageReference.child(key + ".png");
-                imageRef.putFile(file).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(CreateSocial.this, "no image selected!", Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        String name = socialName.getText().toString();
-                        if(name.equals("")){
-                            name = "No name";
-                        }
-                        String date = socialDate.getText().toString();
-                        if(date.equals("")){
-                            date = "N/A";
-                        }
-                        String description = socialDescription.getText().toString();
-                        if(description.equals("")){
-                            description = "No description";
-                        }
-                        String owner = user.getEmail();
-                        //add to firebase
-                        ref.child(key).child("interested").setValue(0);
-                        ref.child(key).child("timestamp").setValue(ServerValue.TIMESTAMP);
-                        ref.child(key).child("name").setValue(name);
-                        ref.child(key).child("date").setValue(date);
-                        ref.child(key).child("description").setValue(description);
-                        ref.child(key).child("owner").setValue(owner);
-
-                        Intent returnIntent = new Intent(CreateSocial.this, FeedActivity.class);
-                        startActivity(returnIntent);
-
-                    }
-                });
-
-
-            }
-        });
-
+                break;
+        }
     }
 
     @Override

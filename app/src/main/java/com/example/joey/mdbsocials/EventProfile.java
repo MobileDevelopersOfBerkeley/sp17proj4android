@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,11 +49,11 @@ public class EventProfile extends AppCompatActivity {
         ((TextView) findViewById(R.id.profileDate)).setText(getIntent().getStringExtra("date"));
         ((TextView) findViewById(R.id.profileInterested)).setText(""+interested);
 
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child(id+".png");
-        Glide.with(getApplicationContext()).using(new FirebaseImageLoader()).load(storageReference).into((ImageView) findViewById(R.id.profileImage));
+        FirebaseUtils.loadImageFromFirebase(id, (ImageView) findViewById(R.id.profileImage), (ProgressBar) findViewById(R.id.progressBarProfile));
+
         //use transaction to update the number
 
-
+        //TODO: Could not determine how to get this listener in FirebaseUtils.class because the onclicklistener can ONLY be set after valueEventListener executed
         ref.child("people").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -66,23 +67,7 @@ public class EventProfile extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         if(!people.contains(user.getEmail())){
-                            String key = ref.child("people").push().getKey();
-                            ref.child("people").child(key).setValue(user.getEmail());
-                            ref.child("interested").runTransaction(new Transaction.Handler() {
-                                @Override
-                                public Transaction.Result doTransaction(MutableData mutableData) {
-                                    int interested = mutableData.getValue(Integer.class);
-                                    interested++;
-                                    mutableData.setValue(interested);
-                                    return Transaction.success(mutableData);
-                                }
-
-                                @Override
-                                public void onComplete(DatabaseError databaseError, boolean b,
-                                                       DataSnapshot dataSnapshot) {
-                                    // Transaction completed
-                                }
-                            });
+                            FirebaseUtils.addInterestedTransaction(id);
                             interested++;
                             ((TextView) findViewById(R.id.profileInterested)).setText(""+interested);
 
@@ -93,7 +78,7 @@ public class EventProfile extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(EventProfile.this,"Oh no! Database error!", Toast.LENGTH_SHORT);
+                Toast.makeText(EventProfile.this,"Oh no! Database error!", Toast.LENGTH_SHORT).show();
             }
         });
 

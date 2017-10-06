@@ -21,7 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class FeedActivity extends AppCompatActivity {
+public class FeedActivity extends AppCompatActivity implements View.OnClickListener{
 
     ArrayList<Social> socials = new ArrayList<>();
     final SocialAdapter adapter = new SocialAdapter(FeedActivity.this, socials);
@@ -37,45 +37,20 @@ public class FeedActivity extends AppCompatActivity {
 
         activityList.setAdapter(adapter);
 
-        ref.orderByChild("timestamp").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<Social> newSocials = new ArrayList<>();
-                for (DataSnapshot socialObject : dataSnapshot.getChildren()){
-                    Log.d("WTF", socialObject.child("interested").getValue().getClass().toString());
-                    Log.d("WTF", socialObject.child("interested").getValue().toString());
+        FirebaseUtils.initFeed(FeedActivity.this, adapter);
 
-                    Social social = new Social(socialObject.getKey(),
-                            socialObject.child("owner").getValue(String.class),
-                            socialObject.child("name").getValue(String.class),
-                            socialObject.child("date").getValue(String.class),
-                            socialObject.child("description").getValue(String.class),
-                            socialObject.child("interested").getValue(Integer.class)
-                            );
-                    newSocials.add(social);
-                }
-                //CODE DOES ORDER BY TIMESTAMP, but in descending order, reverse to chagne to ascending.
-                Collections.reverse(newSocials);
-                socials.clear();
-                socials.addAll(newSocials);
-                adapter.notifyDataSetChanged();
-            }
+        findViewById(R.id.newSocialFAB).setOnClickListener(this);
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(FeedActivity.this,"Oh no! Database error!", Toast.LENGTH_SHORT);
-            }
-        });
+    }
 
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.newSocialFAB);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.newSocialFAB:
                 Intent intent = new Intent(getApplicationContext(), CreateSocial.class);
                 startActivity(intent);
-            }
-        });
+                break;
+        }
 
     }
 

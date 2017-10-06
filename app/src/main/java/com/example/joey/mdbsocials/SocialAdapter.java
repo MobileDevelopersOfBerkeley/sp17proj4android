@@ -3,10 +3,12 @@ package com.example.joey.mdbsocials;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -23,6 +25,10 @@ import java.util.ArrayList;
 public class SocialAdapter extends RecyclerView.Adapter<SocialAdapter.SocialViewHolder> {
     private Context context;
     private ArrayList<Social> socials;
+
+    public ArrayList<Social> getSocials(){
+        return socials;
+    }
 
     public SocialAdapter(Context context, ArrayList<Social> socials){
         this.context = context;
@@ -42,9 +48,7 @@ public class SocialAdapter extends RecyclerView.Adapter<SocialAdapter.SocialView
         holder.interestedCount.setText("" + social.interested);
         holder.eventName.setText(social.name);
 
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child(social.id+".png");
-        Glide.with(context).using(new FirebaseImageLoader()).load(storageReference).into(holder.eventImage);
-
+        FirebaseUtils.loadImageFromFirebase(social.id, holder.eventImage, holder.progressBar);
     }
 
     @Override
@@ -57,13 +61,15 @@ public class SocialAdapter extends RecyclerView.Adapter<SocialAdapter.SocialView
         ImageView eventImage;
         TextView interestedCount;
         TextView emailText;
+        ProgressBar progressBar;
 
         public SocialViewHolder(View v){
             super(v);
-            eventName = (TextView) v.findViewById(R.id.eventName);
-            eventImage = (ImageView) v.findViewById(R.id.eventImage);
-            interestedCount = (TextView) v.findViewById(R.id.eventInterested);
-            emailText = (TextView) v.findViewById(R.id.eventEmail);
+            eventName =  v.findViewById(R.id.eventName);
+            eventImage = v.findViewById(R.id.eventImage);
+            interestedCount =  v.findViewById(R.id.eventInterested);
+            emailText =  v.findViewById(R.id.eventEmail);
+            progressBar = v.findViewById(R.id.progressBar);
             itemView.setOnClickListener(this);
         }
 

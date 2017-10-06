@@ -14,7 +14,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
 
     private FirebaseAuth mAuth;
 
@@ -23,44 +23,23 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        findViewById(R.id.createAccountButton).setOnClickListener(this);
+
         mAuth = FirebaseAuth.getInstance();
-
-        ((Button) findViewById(R.id.createAccountButton)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                attemptSignup();
-            }
-        });
-
     }
 
-    private void attemptSignup(){
-        String email = ((EditText) findViewById(R.id.signUpEmailText)).getText().toString();
-        String pass1 = ((EditText) findViewById(R.id.signUpPasswordText)).getText().toString();
-        String pass2 = ((EditText) findViewById(R.id.confirmPasswordText)).getText().toString();
-        if(email.equals("")){
-            Toast.makeText(SignUpActivity.this, "Enter Valid email!", Toast.LENGTH_SHORT).show();
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.createAccountButton:
+                String email = ((EditText) findViewById(R.id.signUpEmailText)).getText().toString();
+                String pass1 = ((EditText) findViewById(R.id.signUpPasswordText)).getText().toString();
+                String pass2 = ((EditText) findViewById(R.id.confirmPasswordText)).getText().toString();
+                FirebaseUtils.attemptSignup(this, email, pass1, pass2);
+                break;
         }
-        else if(pass1.equals("") || pass2.equals("")){
-            Toast.makeText(SignUpActivity.this, "Complete both password banks!", Toast.LENGTH_SHORT).show();
-        }
-        else if(!pass1.equals(pass2)){
-            Toast.makeText(SignUpActivity.this, "Passwords do not match!", Toast.LENGTH_SHORT).show();
-        }else{
-            mAuth.createUserWithEmailAndPassword(email, pass1).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if(!task.isSuccessful()) {
-                        Toast.makeText(SignUpActivity.this, "Signup failed!", Toast.LENGTH_SHORT).show();
-                    }else {
-                        Intent intent = new Intent(SignUpActivity.this, FeedActivity.class);
-                        startActivity(intent);
-                    }
-                }
-            });
-        }
-
     }
+
     @Override
     protected void onResume() {
         super.onResume();

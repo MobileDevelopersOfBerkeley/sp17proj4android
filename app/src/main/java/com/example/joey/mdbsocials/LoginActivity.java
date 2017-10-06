@@ -17,7 +17,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -26,6 +26,10 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        findViewById(R.id.loginButton).setOnClickListener(this);
+        findViewById(R.id.signUpButton).setOnClickListener(this);
+
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -43,51 +47,29 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
 
-        //maybe put the listener attachment in onCreate not onStart?
         mAuth.addAuthStateListener(mAuthListener);
 
-        ((Button) findViewById(R.id.loginButton)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                attemptLogin();
-            }
-        });
+    }
 
-
-        ((Button) findViewById(R.id.signUpButton)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    @Override
+    public void onClick(View view) {
+        Log.d("THIS", "SHIT WAS CALLED");
+        switch(view.getId()){
+            case R.id.loginButton:
+                String email = ((EditText) findViewById(R.id.emailText)).getText().toString();
+                String password = ((EditText) findViewById(R.id.passwordText)).getText().toString();
+                FirebaseUtils.attemptLogin(this, email, password);
+                break;
+            case R.id.signUpButton:
                 Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
                 startActivity(intent);
-            }
-        });
-
-    }
-
-    private void attemptLogin() {
-        String email = ((EditText) findViewById(R.id.emailText)).getText().toString();
-        String password = ((EditText) findViewById(R.id.passwordText)).getText().toString();
-        if (!email.equals("") && !password.equals("")) {
-            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    Log.d("FIREBASE", "signInWithEmail:onComplete:"+task.isSuccessful());
-
-                    if(!task.isSuccessful()){
-                        Log.w("FIREBASE", "signInWithEmail:failed", task.getException());
-                        Toast.makeText(LoginActivity.this, "Login failed!", Toast.LENGTH_SHORT).show();
-                    }else {
-                        Intent intent = new Intent(LoginActivity.this, FeedActivity.class);
-                        startActivity(intent);
-                        Toast.makeText(LoginActivity.this, "Login SUCCESS!", Toast.LENGTH_SHORT).show();
-
-                    }
-
-                }
-            });
-
+                break;
+            default:
+                break;
         }
     }
+
+
 
     @Override
     protected void onResume() {
